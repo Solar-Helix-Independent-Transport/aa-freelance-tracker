@@ -1,6 +1,7 @@
 """ESI Client Provider"""
 
 # Alliance Auth (ESI)
+# Alliance Auth
 from esi.openapi_clients import ESIClientProvider
 
 # AA Freelance Tracker

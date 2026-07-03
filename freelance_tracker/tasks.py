@@ -5,7 +5,8 @@ import logging
 from itertools import chain as chain_iterables
 
 # Third Party
-from celery import chain as celery_chain, shared_task
+from celery import chain as celery_chain
+from celery import shared_task
 
 # Django
 from django.utils import timezone

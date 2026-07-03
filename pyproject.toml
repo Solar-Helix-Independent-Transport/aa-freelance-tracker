@@ -40,7 +40,7 @@ dynamic = [
 ]
 dependencies = [
     "allianceauth>=5",
-    "django-esi>=9.6.0",
+    "django-esi>=9.6",
 ]
 urls.Changelog = "https://github.com/Solar-Helix-Independent-Transport/aa-freelance-tracker/blob/master/CHANGELOG.md"
 urls.Tracker = "https://github.com/Solar-Helix-Independent-Transport/aa-freelance-tracker/issues"

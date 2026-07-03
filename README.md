@@ -29,19 +29,19 @@ corporation "Freelance Jobs" from the EVE Online ESI.
    pip install aa-freelance-tracker
    ```
 
-2. Add `"freelance_tracker"` to `INSTALLED_APPS` in your Auth project's
+1. Add `"freelance_tracker"` to `INSTALLED_APPS` in your Auth project's
    `settings/local.py`.
 
-3. Run migrations and collect static files:
+1. Run migrations and collect static files:
 
    ```bash
    python manage.py migrate
    python manage.py collectstatic
    ```
 
-4. Restart your Auth (gunicorn, Celery worker, and Celery beat).
+1. Restart your Auth (gunicorn, Celery worker, and Celery beat).
 
-5. Run the [post-install setup](#post-install-setup) command below to schedule
+1. Run the [post-install setup](#post-install-setup) command below to schedule
    the periodic sync.
 
 ## ESI Scopes
@@ -55,13 +55,13 @@ corporation "Freelance Jobs" from the EVE Online ESI.
 
 ## Permissions
 
-| Permission        | Description                                              |
-|--------------------|-----------------------------------------------------------|
-| `basic_access`     | Can access the app at all.                                 |
-| `add_corp_owner`   | Can link (or refresh the ESI token for) a corporation.     |
-| `view_corp`        | Can see Freelance Jobs for their own corporation.           |
-| `view_alliance`    | Can see Freelance Jobs for every corporation in their alliance (their own corp is included automatically). |
-| `view_faction`     | Can see Freelance Jobs for every corporation in their faction. |
+| Permission       | Description                                                                                                |
+| ---------------- | ---------------------------------------------------------------------------------------------------------- |
+| `basic_access`   | Can access the app at all.                                                                                 |
+| `add_corp_owner` | Can link (or refresh the ESI token for) a corporation.                                                     |
+| `view_corp`      | Can see Freelance Jobs for their own corporation.                                                          |
+| `view_alliance`  | Can see Freelance Jobs for every corporation in their alliance (their own corp is included automatically). |
+| `view_faction`   | Can see Freelance Jobs for every corporation in their faction.                                             |
 
 A user can hold any combination of `view_corp`/`view_alliance`/`view_faction` and
 sees the union of what they grant. `basic_access` is required in addition to at
@@ -111,13 +111,13 @@ Each corporation's sync is a small chain of Celery tasks, not one big task:
    looks at what's new. Jobs already tracked as `Active` are always rechecked
    too, since a job's detail and its participants have their own ESI caching
    independent of the listing.
-2. **Dispatch** (`_dispatch_freelance_job_syncs`) chains one task per job to
+1. **Dispatch** (`_dispatch_freelance_job_syncs`) chains one task per job to
    sync, in sequence.
-3. **Per-job sync** (`_sync_freelance_job`) fetches that job's detail, updates
+1. **Per-job sync** (`_sync_freelance_job`) fetches that job's detail, updates
    it in the database, and syncs its participants if it's `Active`. This is
    the task an ESI rate limit is applied to, since it's the one making the
    per-job ESI calls.
-4. **Finalize** (`_finalize_corp_sync`) stamps `Owner.last_update` once every
+1. **Finalize** (`_finalize_corp_sync`) stamps `Owner.last_update` once every
    job in that corp's sync has finished.
 
 `update_all_corp_freelance_jobs` (the periodic task) queues one such chain per

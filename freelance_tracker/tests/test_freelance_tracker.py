@@ -2,7 +2,8 @@
 
 # Standard Library
 import uuid
-from datetime import datetime, timezone as dt_timezone
+from datetime import datetime
+from datetime import timezone as dt_timezone
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -12,7 +13,10 @@ from django.urls import reverse
 
 # Alliance Auth
 from allianceauth.eveonline.models import (
-    EveAllianceInfo, EveCharacter, EveCorporationInfo, EveFactionInfo,
+    EveAllianceInfo,
+    EveCharacter,
+    EveCorporationInfo,
+    EveFactionInfo,
 )
 from allianceauth.tests.auth_utils import AuthUtils
 from esi.exceptions import HTTPNotModified
