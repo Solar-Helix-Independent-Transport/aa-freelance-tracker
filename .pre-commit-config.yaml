@@ -198,10 +198,10 @@ repos:
         args:
           - --py310-plus  # Minimum required Python version for AA. Update as needed.
 
-  - repo: https://github.com/PyCQA/autoflake
-    rev: v2.3.3
-    hooks:
-    -   id: autoflake
+  # - repo: https://github.com/PyCQA/autoflake
+  #   rev: v2.3.3
+  #   hooks:
+  #   -   id: autoflake
 
   - repo: https://github.com/asottile/yesqa
     rev: f2ae90cf9e1661ade79d0881186ce4fd7ba6ee79  # frozen: v1.5.0
