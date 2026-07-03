@@ -1,0 +1,98 @@
+{% extends 'freelance_tracker/base.html' %}
+
+{% load i18n %}
+{% load humanize %}
+
+{% block details %}
+    <div class="card card-primary mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div class="card-title mb-0">{{ job.name }}</div>
+            <a class="btn btn-outline-secondary btn-sm" href="{% url 'freelance_tracker:index' %}">
+                {% translate "Back to list" %}
+            </a>
+        </div>
+
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">{% translate "Corporation" %}</dt>
+                <dd class="col-sm-9">{{ job.owner.corporation }}</dd>
+
+                <dt class="col-sm-3">{% translate "Career" %}</dt>
+                <dd class="col-sm-9">{{ job.get_career_display }}</dd>
+
+                <dt class="col-sm-3">{% translate "State" %}</dt>
+                <dd class="col-sm-9">{{ job.get_state_display }}</dd>
+
+                <dt class="col-sm-3">{% translate "Progress" %}</dt>
+                <dd class="col-sm-9">
+                    {{ job.progress_current|intcomma }} / {{ job.progress_desired|intcomma }}
+                </dd>
+
+                <dt class="col-sm-3">{% translate "Reward" %}</dt>
+                <dd class="col-sm-9">
+                    {{ job.reward_remaining|floatformat:2|intcomma }} / {{ job.reward_initial|floatformat:2|intcomma }} ISK {% translate "remaining" %}
+                </dd>
+
+                <dt class="col-sm-3">{% translate "Created" %}</dt>
+                <dd class="col-sm-9">{{ job.created }}</dd>
+
+                <dt class="col-sm-3">{% translate "Expires" %}</dt>
+                <dd class="col-sm-9">{{ job.expires }}</dd>
+
+                <dt class="col-sm-3">{% translate "Description" %}</dt>
+                <dd class="col-sm-9" style="white-space: pre-wrap;">{{ job.description }}</dd>
+
+                <dt class="col-sm-3">{% translate "Contribution Method" %}</dt>
+                <dd class="col-sm-9">
+                    {{ method_title }}
+                    {% if method_description %}
+                        <div class="text-muted">{{ method_description }}</div>
+                    {% endif %}
+                </dd>
+
+                {% if parameter_rows %}
+                    <dt class="col-sm-3">{% translate "Parameters" %}</dt>
+                    <dd class="col-sm-9">
+                        <dl class="row mb-0">
+                            {% for row in parameter_rows %}
+                                <dt class="col-sm-4">{{ row.title }}</dt>
+                                <dd class="col-sm-8"><code>{{ row.value }}</code></dd>
+                            {% endfor %}
+                        </dl>
+                    </dd>
+                {% endif %}
+            </dl>
+        </div>
+    </div>
+
+    <div class="card card-primary">
+        <div class="card-header">
+            <div class="card-title mb-0">{% translate "Participants" %}</div>
+        </div>
+
+        <div class="card-body">
+            {% if not participants %}
+                <p class="mb-0">{% translate "No participants yet." %}</p>
+            {% else %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>{% translate "Character" %}</th>
+                            <th>{% translate "State" %}</th>
+                            <th>{% translate "Contributed" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for participant in participants %}
+                            <tr>
+                                <td>{{ participant.character_name }}</td>
+                                <td>{{ participant.get_state_display }}</td>
+                                <td>{{ participant.contributed|intcomma }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

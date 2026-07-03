@@ -1,0 +1,1169 @@
+[
+  {
+    "model": "eveonline.eveallianceinfo",
+    "pk": 9900,
+    "fields": {
+      "alliance_id": 99000001,
+      "alliance_name": "OpenAPI is Love",
+      "alliance_ticker": "-API-"
+    }
+  },
+  {
+    "model": "eveonline.evecorporationinfo",
+    "pk": 9001,
+    "fields": {
+      "corporation_id": 98000001,
+      "corporation_name": "ESI Provides Value",
+      "corporation_ticker": "ESI-V",
+      "member_count": 340,
+      "alliance": 9900
+    }
+  },
+  {
+    "model": "eveonline.evecorporationinfo",
+    "pk": 9002,
+    "fields": {
+      "corporation_id": 98000002,
+      "corporation_name": "Solar Helix Independant Transport",
+      "corporation_ticker": "SH1T",
+      "member_count": 210,
+      "alliance": 9900
+    }
+  },
+  {
+    "model": "freelance_tracker.owner",
+    "pk": 1,
+    "fields": {
+      "corporation": 9001,
+      "is_active": true,
+      "last_update": "2026-07-03T12:00:00Z",
+      "jobs_cursor": ""
+    }
+  },
+  {
+    "model": "freelance_tracker.owner",
+    "pk": 2,
+    "fields": {
+      "corporation": 9002,
+      "is_active": true,
+      "last_update": "2026-07-03T12:00:00Z",
+      "jobs_cursor": ""
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "09d99cfb-2bb8-568b-b3ca-754947ffa215",
+    "fields": {
+      "owner": 1,
+      "name": "Uncharted Signal Survey",
+      "state": "Unspecified",
+      "career": "Explorer",
+      "description": "Details for this contract are still being finalized.",
+      "creator_character_id": 90000001,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": "2026-08-02T12:00:00Z",
+      "finished": null,
+      "progress_current": 0,
+      "progress_desired": 100,
+      "reward_initial": 0.0,
+      "reward_remaining": 0.0,
+      "configuration_method": "BoostShield",
+      "configuration_version": 1,
+      "configuration_parameters": {
+        "location": {
+          "matcher": {
+            "values": [
+              {
+                "value_type": "solarsystem",
+                "values": [
+                  "30000142"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "contribution": {
+        "max_committed_participants": 50
+      },
+      "access_and_visibility": {
+        "acl_protected": false
+      },
+      "last_modified": "2026-06-19T12:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "6211a206-be18-5881-9a2d-a34655e281fd",
+    "fields": {
+      "owner": 1,
+      "name": "Chart the Placid Deadspace Pocket",
+      "state": "Active",
+      "career": "Explorer",
+      "description": "Currently accepting contributions from corporation members.",
+      "creator_character_id": 90000002,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": "2026-07-10T12:00:00Z",
+      "finished": null,
+      "progress_current": 40,
+      "progress_desired": 100,
+      "reward_initial": 25000000.0,
+      "reward_remaining": 15000000.0,
+      "configuration_method": "CaptureFWComplex",
+      "configuration_version": 1,
+      "configuration_parameters": {
+        "location": {
+          "matcher": {
+            "values": [
+              {
+                "value_type": "solarsystem",
+                "values": [
+                  "30000142"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "contribution": {
+        "max_committed_participants": 50
+      },
+      "access_and_visibility": {
+        "acl_protected": false
+      },
+      "last_modified": "2026-07-03T10:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejobparticipant",
+    "pk": 1,
+    "fields": {
+      "job": "6211a206-be18-5881-9a2d-a34655e281fd",
+      "character_id": 95000001,
+      "character_name": "Aria Ventrix",
+      "state": "Committed",
+      "contributed": 2500000
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejobparticipant",
+    "pk": 2,
+    "fields": {
+      "job": "6211a206-be18-5881-9a2d-a34655e281fd",
+      "character_id": 95000002,
+      "character_name": "Boran Kesh",
+      "state": "Committed",
+      "contributed": 5000000
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejobparticipant",
+    "pk": 3,
+    "fields": {
+      "job": "6211a206-be18-5881-9a2d-a34655e281fd",
+      "character_id": 95000003,
+      "character_name": "Cassia Dorne",
+      "state": "Committed",
+      "contributed": 7500000
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "2de00914-ce43-530d-8a3d-ff825ae95257",
+    "fields": {
+      "owner": 1,
+      "name": "Scout the Syndicate Trade Routes",
+      "state": "Closed",
+      "career": "Explorer",
+      "description": "This contract was closed before it could be completed.",
+      "creator_character_id": 90000003,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": "2026-07-02T12:00:00Z",
+      "finished": "2026-07-02T12:00:00Z",
+      "progress_current": 20,
+      "progress_desired": 100,
+      "reward_initial": 18000000.0,
+      "reward_remaining": 9000000.0,
+      "configuration_method": "DamageShip",
+      "configuration_version": 1,
+      "configuration_parameters": {
+        "location": {
+          "matcher": {
+            "values": [
+              {
+                "value_type": "solarsystem",
+                "values": [
+                  "30000142"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "contribution": {
+        "max_committed_participants": 50
+      },
+      "access_and_visibility": {
+        "acl_protected": false
+      },
+      "last_modified": "2026-07-02T12:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "dd812e3a-3497-566c-b44f-82763e782a83",
+    "fields": {
+      "owner": 1,
+      "name": "Map the Blackrise Wormhole Chain",
+      "state": "Completed",
+      "career": "Explorer",
+      "description": "Wrapped up successfully - rewards have been paid out.",
+      "creator_character_id": 90000004,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": "2026-07-01T12:00:00Z",
+      "finished": "2026-06-30T12:00:00Z",
+      "progress_current": 100,
+      "progress_desired": 100,
+      "reward_initial": 30000000.0,
+      "reward_remaining": 0.0,
+      "configuration_method": "DefendFWComplex",
+      "configuration_version": 1,
+      "configuration_parameters": {
+        "location": {
+          "matcher": {
+            "values": [
+              {
+                "value_type": "solarsystem",
+                "values": [
+                  "30000142"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "contribution": {
+        "max_committed_participants": 50
+      },
+      "access_and_visibility": {
+        "acl_protected": false
+      },
+      "last_modified": "2026-06-30T12:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "5a546606-c81d-51e8-827f-815156e7ae90",
+    "fields": {
+      "owner": 1,
+      "name": "Survey the Derelict Outpost",
+      "state": "Expired",
+      "career": "Explorer",
+      "description": "Time ran out before this contract could be completed.",
+      "creator_character_id": 90000001,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": "2026-06-28T12:00:00Z",
+      "finished": null,
+      "progress_current": 60,
+      "progress_desired": 100,
+      "reward_initial": 20000000.0,
+      "reward_remaining": 6000000.0,
+      "configuration_method": "DeliverItem",
+      "configuration_version": 1,
+      "configuration_parameters": {
+        "corporation_item_delivery": {
+          "corporation_item_delivery": {
+            "corporation_office_location": {
+              "values": [
+                {
+                  "value_type": "station",
+                  "values": [
+                    "60003760"
+                  ]
+                }
+              ]
+            },
+            "item_type": {
+              "values": [
+                {
+                  "value_type": "type",
+                  "values": [
+                    "34"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "contribution": {
+        "max_committed_participants": 50
+      },
+      "access_and_visibility": {
+        "acl_protected": false
+      },
+      "last_modified": "2026-06-28T12:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "4b57108c-42a0-546c-91a1-6c5755c29f74",
+    "fields": {
+      "owner": 1,
+      "name": "Recon the Sinq Laison Frontier",
+      "state": "Deleted",
+      "career": "Explorer",
+      "description": "",
+      "creator_character_id": 90000002,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": null,
+      "finished": null,
+      "progress_current": 0,
+      "progress_desired": 0,
+      "reward_initial": 0.0,
+      "reward_remaining": 0.0,
+      "configuration_method": "",
+      "configuration_version": 1,
+      "configuration_parameters": {},
+      "contribution": {},
+      "access_and_visibility": {},
+      "last_modified": "2026-06-23T12:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "404440f9-8078-574a-83fe-9a36524c4b82",
+    "fields": {
+      "owner": 2,
+      "name": "General Manufacturing Support",
+      "state": "Unspecified",
+      "career": "Industrialist",
+      "description": "Details for this contract are still being finalized.",
+      "creator_character_id": 90000003,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": "2026-08-02T12:00:00Z",
+      "finished": null,
+      "progress_current": 0,
+      "progress_desired": 100,
+      "reward_initial": 0.0,
+      "reward_remaining": 0.0,
+      "configuration_method": "KillNPC",
+      "configuration_version": 1,
+      "configuration_parameters": {
+        "location": {
+          "matcher": {
+            "values": [
+              {
+                "value_type": "solarsystem",
+                "values": [
+                  "30000142"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "contribution": {
+        "max_committed_participants": 50
+      },
+      "access_and_visibility": {
+        "acl_protected": false
+      },
+      "last_modified": "2026-06-19T12:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "e0f28208-8b89-5b60-b0c0-122e75555c3c",
+    "fields": {
+      "owner": 2,
+      "name": "Mine Veldspar for the Refinery Push",
+      "state": "Active",
+      "career": "Industrialist",
+      "description": "Currently accepting contributions from corporation members.",
+      "creator_character_id": 90000004,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": "2026-07-10T12:00:00Z",
+      "finished": null,
+      "progress_current": 40,
+      "progress_desired": 100,
+      "reward_initial": 25000000.0,
+      "reward_remaining": 15000000.0,
+      "configuration_method": "MineOre",
+      "configuration_version": 1,
+      "configuration_parameters": {
+        "location": {
+          "matcher": {
+            "values": [
+              {
+                "value_type": "solarsystem",
+                "values": [
+                  "30000142"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "contribution": {
+        "max_committed_participants": 50
+      },
+      "access_and_visibility": {
+        "acl_protected": false
+      },
+      "last_modified": "2026-07-03T10:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejobparticipant",
+    "pk": 4,
+    "fields": {
+      "job": "e0f28208-8b89-5b60-b0c0-122e75555c3c",
+      "character_id": 95000004,
+      "character_name": "Aria Ventrix",
+      "state": "Committed",
+      "contributed": 2500000
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejobparticipant",
+    "pk": 5,
+    "fields": {
+      "job": "e0f28208-8b89-5b60-b0c0-122e75555c3c",
+      "character_id": 95000005,
+      "character_name": "Boran Kesh",
+      "state": "Committed",
+      "contributed": 5000000
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejobparticipant",
+    "pk": 6,
+    "fields": {
+      "job": "e0f28208-8b89-5b60-b0c0-122e75555c3c",
+      "character_id": 95000006,
+      "character_name": "Cassia Dorne",
+      "state": "Committed",
+      "contributed": 7500000
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "685f7e02-226e-5b37-b612-8fb19db25cb2",
+    "fields": {
+      "owner": 2,
+      "name": "Haul Ore from Amarr to Jita",
+      "state": "Closed",
+      "career": "Industrialist",
+      "description": "This contract was closed before it could be completed.",
+      "creator_character_id": 90000001,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": "2026-07-02T12:00:00Z",
+      "finished": "2026-07-02T12:00:00Z",
+      "progress_current": 20,
+      "progress_desired": 100,
+      "reward_initial": 18000000.0,
+      "reward_remaining": 9000000.0,
+      "configuration_method": "RepairArmor",
+      "configuration_version": 1,
+      "configuration_parameters": {
+        "location": {
+          "matcher": {
+            "values": [
+              {
+                "value_type": "solarsystem",
+                "values": [
+                  "30000142"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "contribution": {
+        "max_committed_participants": 50
+      },
+      "access_and_visibility": {
+        "acl_protected": false
+      },
+      "last_modified": "2026-07-02T12:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "7eefb871-b849-5d17-82ae-de5083beef8b",
+    "fields": {
+      "owner": 2,
+      "name": "Build Capital Ship Components",
+      "state": "Completed",
+      "career": "Industrialist",
+      "description": "Wrapped up successfully - rewards have been paid out.",
+      "creator_character_id": 90000002,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": "2026-07-01T12:00:00Z",
+      "finished": "2026-06-30T12:00:00Z",
+      "progress_current": 100,
+      "progress_desired": 100,
+      "reward_initial": 30000000.0,
+      "reward_remaining": 0.0,
+      "configuration_method": "ShipInsurance",
+      "configuration_version": 1,
+      "configuration_parameters": {
+        "location": {
+          "matcher": {
+            "values": [
+              {
+                "value_type": "solarsystem",
+                "values": [
+                  "30000142"
+                ]
+              }
+            ]
+          }
+        },
+        "cover_implants": {
+          "boolean": {
+            "value": true
+          }
+        },
+        "require_capsuleer_involvement": {
+          "boolean": {
+            "value": false
+          }
+        }
+      },
+      "contribution": {
+        "max_committed_participants": 50
+      },
+      "access_and_visibility": {
+        "acl_protected": false
+      },
+      "last_modified": "2026-06-30T12:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "6a42bcd3-feb5-5c50-9e0f-4db9b0a5ee3b",
+    "fields": {
+      "owner": 2,
+      "name": "Reprocess the Salvage Backlog",
+      "state": "Expired",
+      "career": "Industrialist",
+      "description": "Time ran out before this contract could be completed.",
+      "creator_character_id": 90000003,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": "2026-06-28T12:00:00Z",
+      "finished": null,
+      "progress_current": 60,
+      "progress_desired": 100,
+      "reward_initial": 20000000.0,
+      "reward_remaining": 6000000.0,
+      "configuration_method": "BoostShield",
+      "configuration_version": 1,
+      "configuration_parameters": {
+        "location": {
+          "matcher": {
+            "values": [
+              {
+                "value_type": "solarsystem",
+                "values": [
+                  "30000142"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "contribution": {
+        "max_committed_participants": 50
+      },
+      "access_and_visibility": {
+        "acl_protected": false
+      },
+      "last_modified": "2026-06-28T12:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "5c2256bb-0939-5077-a111-3c9521fd6899",
+    "fields": {
+      "owner": 2,
+      "name": "Supply Line Reinforcement",
+      "state": "Deleted",
+      "career": "Industrialist",
+      "description": "",
+      "creator_character_id": 90000004,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": null,
+      "finished": null,
+      "progress_current": 0,
+      "progress_desired": 0,
+      "reward_initial": 0.0,
+      "reward_remaining": 0.0,
+      "configuration_method": "",
+      "configuration_version": 1,
+      "configuration_parameters": {},
+      "contribution": {},
+      "access_and_visibility": {},
+      "last_modified": "2026-06-23T12:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "642b7a3b-4bcc-5929-b786-3aa6f04cf40c",
+    "fields": {
+      "owner": 1,
+      "name": "Corp Security Standby",
+      "state": "Unspecified",
+      "career": "Enforcer",
+      "description": "Details for this contract are still being finalized.",
+      "creator_character_id": 90000001,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": "2026-08-02T12:00:00Z",
+      "finished": null,
+      "progress_current": 0,
+      "progress_desired": 100,
+      "reward_initial": 0.0,
+      "reward_remaining": 0.0,
+      "configuration_method": "DamageShip",
+      "configuration_version": 1,
+      "configuration_parameters": {
+        "location": {
+          "matcher": {
+            "values": [
+              {
+                "value_type": "solarsystem",
+                "values": [
+                  "30000142"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "contribution": {
+        "max_committed_participants": 50
+      },
+      "access_and_visibility": {
+        "acl_protected": false
+      },
+      "last_modified": "2026-06-19T12:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "14881939-095f-5f4f-966d-901aaab077da",
+    "fields": {
+      "owner": 1,
+      "name": "Defend the Home System Gate",
+      "state": "Active",
+      "career": "Enforcer",
+      "description": "Currently accepting contributions from corporation members.",
+      "creator_character_id": 90000002,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": "2026-07-10T12:00:00Z",
+      "finished": null,
+      "progress_current": 40,
+      "progress_desired": 100,
+      "reward_initial": 25000000.0,
+      "reward_remaining": 15000000.0,
+      "configuration_method": "DefendFWComplex",
+      "configuration_version": 1,
+      "configuration_parameters": {
+        "location": {
+          "matcher": {
+            "values": [
+              {
+                "value_type": "solarsystem",
+                "values": [
+                  "30000142"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "contribution": {
+        "max_committed_participants": 50
+      },
+      "access_and_visibility": {
+        "acl_protected": false
+      },
+      "last_modified": "2026-07-03T10:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejobparticipant",
+    "pk": 7,
+    "fields": {
+      "job": "14881939-095f-5f4f-966d-901aaab077da",
+      "character_id": 95000007,
+      "character_name": "Aria Ventrix",
+      "state": "Committed",
+      "contributed": 2500000
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejobparticipant",
+    "pk": 8,
+    "fields": {
+      "job": "14881939-095f-5f4f-966d-901aaab077da",
+      "character_id": 95000008,
+      "character_name": "Boran Kesh",
+      "state": "Committed",
+      "contributed": 5000000
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejobparticipant",
+    "pk": 9,
+    "fields": {
+      "job": "14881939-095f-5f4f-966d-901aaab077da",
+      "character_id": 95000009,
+      "character_name": "Cassia Dorne",
+      "state": "Committed",
+      "contributed": 7500000
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "9d365490-72d6-52da-9bb1-b70aaa808a37",
+    "fields": {
+      "owner": 1,
+      "name": "Hunt Down Wardec Aggressors",
+      "state": "Closed",
+      "career": "Enforcer",
+      "description": "This contract was closed before it could be completed.",
+      "creator_character_id": 90000003,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": "2026-07-02T12:00:00Z",
+      "finished": "2026-07-02T12:00:00Z",
+      "progress_current": 20,
+      "progress_desired": 100,
+      "reward_initial": 18000000.0,
+      "reward_remaining": 9000000.0,
+      "configuration_method": "DeliverItem",
+      "configuration_version": 1,
+      "configuration_parameters": {
+        "corporation_item_delivery": {
+          "corporation_item_delivery": {
+            "corporation_office_location": {
+              "values": [
+                {
+                  "value_type": "station",
+                  "values": [
+                    "60003760"
+                  ]
+                }
+              ]
+            },
+            "item_type": {
+              "values": [
+                {
+                  "value_type": "type",
+                  "values": [
+                    "34"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "contribution": {
+        "max_committed_participants": 50
+      },
+      "access_and_visibility": {
+        "acl_protected": false
+      },
+      "last_modified": "2026-07-02T12:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "1914b070-99dc-574c-ba96-6b1c7cb624f3",
+    "fields": {
+      "owner": 1,
+      "name": "Escort the Freight Convoy",
+      "state": "Completed",
+      "career": "Enforcer",
+      "description": "Wrapped up successfully - rewards have been paid out.",
+      "creator_character_id": 90000004,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": "2026-07-01T12:00:00Z",
+      "finished": "2026-06-30T12:00:00Z",
+      "progress_current": 100,
+      "progress_desired": 100,
+      "reward_initial": 30000000.0,
+      "reward_remaining": 0.0,
+      "configuration_method": "KillCapsuleer",
+      "configuration_version": 1,
+      "configuration_parameters": {
+        "location": {
+          "matcher": {
+            "values": [
+              {
+                "value_type": "solarsystem",
+                "values": [
+                  "30000142"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "contribution": {
+        "max_committed_participants": 50
+      },
+      "access_and_visibility": {
+        "acl_protected": false
+      },
+      "last_modified": "2026-06-30T12:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "12215a16-00bd-5fb7-951a-8f79b58c2f2f",
+    "fields": {
+      "owner": 1,
+      "name": "Patrol the Null Sec Border",
+      "state": "Expired",
+      "career": "Enforcer",
+      "description": "Time ran out before this contract could be completed.",
+      "creator_character_id": 90000001,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": "2026-06-28T12:00:00Z",
+      "finished": null,
+      "progress_current": 60,
+      "progress_desired": 100,
+      "reward_initial": 20000000.0,
+      "reward_remaining": 6000000.0,
+      "configuration_method": "KillNPC",
+      "configuration_version": 1,
+      "configuration_parameters": {
+        "location": {
+          "matcher": {
+            "values": [
+              {
+                "value_type": "solarsystem",
+                "values": [
+                  "30000142"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "contribution": {
+        "max_committed_participants": 50
+      },
+      "access_and_visibility": {
+        "acl_protected": false
+      },
+      "last_modified": "2026-06-28T12:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "8cd68282-c7b2-5b96-aa9b-8e6e4f0675f1",
+    "fields": {
+      "owner": 1,
+      "name": "Suppress Pirate Activity",
+      "state": "Deleted",
+      "career": "Enforcer",
+      "description": "",
+      "creator_character_id": 90000002,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": null,
+      "finished": null,
+      "progress_current": 0,
+      "progress_desired": 0,
+      "reward_initial": 0.0,
+      "reward_remaining": 0.0,
+      "configuration_method": "",
+      "configuration_version": 1,
+      "configuration_parameters": {},
+      "contribution": {},
+      "access_and_visibility": {},
+      "last_modified": "2026-06-23T12:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "fec0aa57-dc25-5f54-a79f-4d4200646a34",
+    "fields": {
+      "owner": 2,
+      "name": "Open Mercenary Contract",
+      "state": "Unspecified",
+      "career": "Soldier of Fortune",
+      "description": "Details for this contract are still being finalized.",
+      "creator_character_id": 90000003,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": "2026-08-02T12:00:00Z",
+      "finished": null,
+      "progress_current": 0,
+      "progress_desired": 100,
+      "reward_initial": 0.0,
+      "reward_remaining": 0.0,
+      "configuration_method": "RepairArmor",
+      "configuration_version": 1,
+      "configuration_parameters": {
+        "location": {
+          "matcher": {
+            "values": [
+              {
+                "value_type": "solarsystem",
+                "values": [
+                  "30000142"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "contribution": {
+        "max_committed_participants": 50
+      },
+      "access_and_visibility": {
+        "acl_protected": false
+      },
+      "last_modified": "2026-06-19T12:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "8e7ba8fe-cfb7-56cb-ba5c-35bd417cfae5",
+    "fields": {
+      "owner": 2,
+      "name": "Break the Siege at Poinen",
+      "state": "Active",
+      "career": "Soldier of Fortune",
+      "description": "Currently accepting contributions from corporation members.",
+      "creator_character_id": 90000004,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": "2026-07-10T12:00:00Z",
+      "finished": null,
+      "progress_current": 40,
+      "progress_desired": 100,
+      "reward_initial": 25000000.0,
+      "reward_remaining": 15000000.0,
+      "configuration_method": "ShipInsurance",
+      "configuration_version": 1,
+      "configuration_parameters": {
+        "location": {
+          "matcher": {
+            "values": [
+              {
+                "value_type": "solarsystem",
+                "values": [
+                  "30000142"
+                ]
+              }
+            ]
+          }
+        },
+        "cover_implants": {
+          "boolean": {
+            "value": true
+          }
+        },
+        "require_capsuleer_involvement": {
+          "boolean": {
+            "value": false
+          }
+        }
+      },
+      "contribution": {
+        "max_committed_participants": 50
+      },
+      "access_and_visibility": {
+        "acl_protected": false
+      },
+      "last_modified": "2026-07-03T10:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejobparticipant",
+    "pk": 10,
+    "fields": {
+      "job": "8e7ba8fe-cfb7-56cb-ba5c-35bd417cfae5",
+      "character_id": 95000010,
+      "character_name": "Aria Ventrix",
+      "state": "Committed",
+      "contributed": 2500000
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejobparticipant",
+    "pk": 11,
+    "fields": {
+      "job": "8e7ba8fe-cfb7-56cb-ba5c-35bd417cfae5",
+      "character_id": 95000011,
+      "character_name": "Boran Kesh",
+      "state": "Committed",
+      "contributed": 5000000
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejobparticipant",
+    "pk": 12,
+    "fields": {
+      "job": "8e7ba8fe-cfb7-56cb-ba5c-35bd417cfae5",
+      "character_id": 95000012,
+      "character_name": "Cassia Dorne",
+      "state": "Committed",
+      "contributed": 7500000
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "e86cd9ef-78a4-5f4c-8e9f-46d757a41cdc",
+    "fields": {
+      "owner": 2,
+      "name": "Assault the Rival POS",
+      "state": "Closed",
+      "career": "Soldier of Fortune",
+      "description": "This contract was closed before it could be completed.",
+      "creator_character_id": 90000001,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": "2026-07-02T12:00:00Z",
+      "finished": "2026-07-02T12:00:00Z",
+      "progress_current": 20,
+      "progress_desired": 100,
+      "reward_initial": 18000000.0,
+      "reward_remaining": 9000000.0,
+      "configuration_method": "BoostShield",
+      "configuration_version": 1,
+      "configuration_parameters": {
+        "location": {
+          "matcher": {
+            "values": [
+              {
+                "value_type": "solarsystem",
+                "values": [
+                  "30000142"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "contribution": {
+        "max_committed_participants": 50
+      },
+      "access_and_visibility": {
+        "acl_protected": false
+      },
+      "last_modified": "2026-07-02T12:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "da31cd02-4083-5442-ae3e-12ab9e9affaf",
+    "fields": {
+      "owner": 2,
+      "name": "Clear the Null Sec Staging System",
+      "state": "Completed",
+      "career": "Soldier of Fortune",
+      "description": "Wrapped up successfully - rewards have been paid out.",
+      "creator_character_id": 90000002,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": "2026-07-01T12:00:00Z",
+      "finished": "2026-06-30T12:00:00Z",
+      "progress_current": 100,
+      "progress_desired": 100,
+      "reward_initial": 30000000.0,
+      "reward_remaining": 0.0,
+      "configuration_method": "CaptureFWComplex",
+      "configuration_version": 1,
+      "configuration_parameters": {
+        "location": {
+          "matcher": {
+            "values": [
+              {
+                "value_type": "solarsystem",
+                "values": [
+                  "30000142"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "contribution": {
+        "max_committed_participants": 50
+      },
+      "access_and_visibility": {
+        "acl_protected": false
+      },
+      "last_modified": "2026-06-30T12:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "50a2bdce-c0a6-53a5-bb34-bc39e562cdfb",
+    "fields": {
+      "owner": 2,
+      "name": "Repel the Hostile Fleet",
+      "state": "Expired",
+      "career": "Soldier of Fortune",
+      "description": "Time ran out before this contract could be completed.",
+      "creator_character_id": 90000003,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": "2026-06-28T12:00:00Z",
+      "finished": null,
+      "progress_current": 60,
+      "progress_desired": 100,
+      "reward_initial": 20000000.0,
+      "reward_remaining": 6000000.0,
+      "configuration_method": "DamageShip",
+      "configuration_version": 1,
+      "configuration_parameters": {
+        "location": {
+          "matcher": {
+            "values": [
+              {
+                "value_type": "solarsystem",
+                "values": [
+                  "30000142"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "contribution": {
+        "max_committed_participants": 50
+      },
+      "access_and_visibility": {
+        "acl_protected": false
+      },
+      "last_modified": "2026-06-28T12:00:00Z"
+    }
+  },
+  {
+    "model": "freelance_tracker.freelancejob",
+    "pk": "c080b932-974a-5111-b618-d82c99208d88",
+    "fields": {
+      "owner": 2,
+      "name": "Black Ops Strike Contract",
+      "state": "Deleted",
+      "career": "Soldier of Fortune",
+      "description": "",
+      "creator_character_id": 90000004,
+      "created": "2026-06-19T12:00:00Z",
+      "expires": null,
+      "finished": null,
+      "progress_current": 0,
+      "progress_desired": 0,
+      "reward_initial": 0.0,
+      "reward_remaining": 0.0,
+      "configuration_method": "",
+      "configuration_version": 1,
+      "configuration_parameters": {},
+      "contribution": {},
+      "access_and_visibility": {},
+      "last_modified": "2026-06-23T12:00:00Z"
+    }
+  }
+]

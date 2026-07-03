@@ -1,0 +1,211 @@
+{% extends 'freelance_tracker/base.html' %}
+
+{% load i18n %}
+{% load humanize %}
+{% load freelance_tracker %}
+
+{% block page_title %}
+    {% translate "All Freelance Jobs" %}
+{% endblock page_title %}
+
+{% block header_nav_brand %}
+    {% translate "All Freelance Jobs" %}
+{% endblock header_nav_brand %}
+
+{% block header_nav_collapse_right %}
+    {% translate "My Jobs" as nav_item_title %}
+    {% url "freelance_tracker:my_jobs" as nav_item_link %}
+    {% include "framework/header/nav-collapse-button.html" with btn_modifier="outline-light" url=nav_item_link title=nav_item_title fa_icon="fa-solid fa-user" icon_on_mobile=True %}
+
+    {% if perms.freelance_tracker.add_corp_owner %}
+        {% translate "Add / Refresh Corp Token" as nav_item_title %}
+        {% url "freelance_tracker:add_corp" as nav_item_link %}
+        {% include "framework/header/nav-collapse-button.html" with btn_modifier="success" url=nav_item_link title=nav_item_title fa_icon="fa-solid fa-arrows-rotate" icon_on_mobile=True %}
+    {% endif %}
+{% endblock header_nav_collapse_right %}
+
+{% block details %}
+    {% if not jobs %}
+        <p class="mb-0">
+            {% translate "No freelance jobs are being tracked yet." %}
+            {% if perms.freelance_tracker.add_corp_owner %}
+                {% translate "Use the Add / Refresh Corp Token button above to link a corporation's ESI token." %}
+            {% endif %}
+        </p>
+    {% else %}
+        <div class="d-flex justify-content-end align-items-center flex-wrap gap-2 mb-3">
+            <select id="fjt-sort" class="form-select w-auto" aria-label="{% translate 'Sort by' %}">
+                <option value="default">{% translate "Sort by..." %}</option>
+                <option value="expires-asc">{% translate "Expiry (soonest first)" %}</option>
+                <option value="reward-desc">{% translate "ISK remaining (highest first)" %}</option>
+            </select>
+
+            <select id="fjt-status-filter" class="form-select w-auto" aria-label="{% translate 'Filter by status' %}">
+                <option value="all">{% translate "All statuses" %}</option>
+                {% for value, label in job_states %}
+                    <option value="{{ value|lower }}" {% if value == "Active" %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+
+            <div class="input-group flex-grow-1" style="max-width: 26rem;">
+                <span class="input-group-text"><i class="fas fa-magnifying-glass" aria-hidden="true"></i></span>
+                <input type="search" id="fjt-search-input" class="form-control"
+                       placeholder="{% translate 'Search by job, corporation, or career...' %}"
+                       aria-label="{% translate 'Search freelance jobs' %}">
+            </div>
+        </div>
+
+        <p id="fjt-search-empty" class="mb-0 d-none">{% translate "No jobs match the current filter." %}</p>
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-3" id="fjt-grid">
+            {% for job in jobs %}
+                <div class="col fjt-job-col"
+                     data-status="{{ job.state|lower }}"
+                     data-expires="{% if job.expires %}{{ job.expires|date:'U' }}{% endif %}"
+                     data-reward-remaining="{{ job.reward_remaining }}"
+                     data-search="{{ job.name|lower }} {{ job.owner.corporation|lower }} {{ job.get_career_display|lower }} {{ job.get_state_display|lower }}">
+                    <div class="card h-100 shadow-sm position-relative overflow-hidden"
+                         style="border-left-color: var(--bs-{{ job.career|career_color }}); border-left-width: 5px;">
+                        <span class="position-absolute top-0 end-0 fjt-notch"
+                              style="border-color: transparent var(--bs-{{ job.career|career_color }}) transparent transparent;"
+                              aria-hidden="true"></span>
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
+                                <span class="text-uppercase text-body-secondary small fw-semibold text-truncate" style="min-width: 0;" title="{{ job.owner.corporation }}">
+                                    {{ job.owner.corporation }}
+                                </span>
+                                <span class="badge text-bg-{{ job.state|state_badge_color }} flex-shrink-0">
+                                    {{ job.get_state_display }}
+                                </span>
+                            </div>
+
+                            <h3 class="fjt-title h6" title="{{ job.name }}">
+                                <a href="{% url 'freelance_tracker:job_detail' job.id %}" class="stretched-link text-reset text-decoration-none">
+                                    {{ job.name }}
+                                </a>
+                            </h3>
+
+                            <div class="mt-auto">
+                                <div class="d-flex align-items-center gap-2 small text-{{ job.career|career_color }}">
+                                    <i class="fas {{ job.career_icon }} fa-fw" aria-hidden="true"></i>
+                                    <span>{{ job.get_career_display }}</span>
+                                </div>
+
+                                <div class="progress mb-1" style="--bs-progress-height: .4rem;" role="progressbar"
+                                     aria-valuenow="{{ job.progress_current }}" aria-valuemin="0" aria-valuemax="{{ job.progress_desired }}">
+                                    <div class="progress-bar bg-{{ job.career|career_color }}"
+                                         style="width: {% widthratio job.progress_current job.progress_desired 100 %}%"></div>
+                                </div>
+                                <div class="small font-monospace text-body-secondary mb-2">
+                                    {{ job.progress_current|intcomma }} / {{ job.progress_desired|intcomma }}
+                                </div>
+
+                                <div class="pt-2 border-top" style="--bs-border-style: dashed;">
+                                    <div class="font-monospace">
+                                        <span class="fw-bold">{{ job.reward_remaining|floatformat:2|intcomma }}</span>
+                                        <span class="small text-body-secondary">{% translate "ISK left" %}</span>
+                                    </div>
+                                    <div class="small text-body-secondary text-nowrap">
+                                        <i class="far fa-clock fa-fw" aria-hidden="true"></i>{{ job.expires|naturaltime }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <style>
+        /* No Bootstrap utility clamps text to N lines, so titles of any
+           length leave the progress bar/footer below at the same position
+           on every card. */
+        .fjt-title {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* No Bootstrap utility draws a corner ribbon; color comes from the
+           same --bs-{color} variable as the card's border, set inline. */
+        .fjt-notch {
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 1.1rem 1.1rem 0;
+            opacity: .55;
+        }
+    </style>
+{% endblock %}
+
+{% block extra_script %}
+    (function () {
+        var searchInput = document.getElementById("fjt-search-input");
+        var grid = document.getElementById("fjt-grid");
+        var statusFilter = document.getElementById("fjt-status-filter");
+        var sortSelect = document.getElementById("fjt-sort");
+
+        if (!searchInput || !grid || !statusFilter || !sortSelect) {
+            return;
+        }
+
+        var cards = grid.querySelectorAll(".fjt-job-col");
+        var originalOrder = Array.prototype.slice.call(cards);
+        var emptyMessage = document.getElementById("fjt-search-empty");
+
+        function applyFilters() {
+            var query = searchInput.value.trim().toLowerCase();
+            var status = statusFilter.value;
+            var visibleCount = 0;
+
+            cards.forEach(function (card) {
+                var matchesQuery = card.dataset.search.indexOf(query) !== -1;
+                var matchesStatus = status === "all" || card.dataset.status === status;
+                var matches = matchesQuery && matchesStatus;
+                card.classList.toggle("d-none", !matches);
+                if (matches) {
+                    visibleCount += 1;
+                }
+            });
+
+            emptyMessage.classList.toggle("d-none", visibleCount !== 0);
+        }
+
+        function applySort() {
+            var sort = sortSelect.value;
+
+            if (sort === "default") {
+                originalOrder.forEach(function (card) {
+                    grid.appendChild(card);
+                });
+                return;
+            }
+
+            var sorted = Array.prototype.slice.call(cards).sort(function (a, b) {
+                if (sort === "expires-asc") {
+                    var aExpires = a.dataset.expires === "" ? Infinity : Number(a.dataset.expires);
+                    var bExpires = b.dataset.expires === "" ? Infinity : Number(b.dataset.expires);
+                    return aExpires - bExpires;
+                }
+
+                if (sort === "reward-desc") {
+                    return Number(b.dataset.rewardRemaining) - Number(a.dataset.rewardRemaining);
+                }
+
+                return 0;
+            });
+
+            sorted.forEach(function (card) {
+                grid.appendChild(card);
+            });
+        }
+
+        searchInput.addEventListener("input", applyFilters);
+        statusFilter.addEventListener("change", applyFilters);
+        sortSelect.addEventListener("change", applySort);
+        applyFilters();
+    })();
+{% endblock extra_script %}
