@@ -8,6 +8,7 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 # Django
+from django.core.cache import cache
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
@@ -135,6 +136,13 @@ class TestUpdateCorpFreelanceJobs(TestCase):
             corporation_name=cls.corporation.corporation_name,
             corporation_ticker=cls.corporation.corporation_ticker,
         )
+
+    def setUp(self):
+        # _sync_freelance_job is rate-limited per owner_pk via the cache, and
+        # every test in this class shares the same owner (created once in
+        # setUpTestData) - clear it so one test's calls don't burn the next
+        # test's rate-limit bucket.
+        cache.clear()
 
     @patch("freelance_tracker.tasks.esi")
     def test_creates_job_and_participants_for_active_job(self, mock_esi):
