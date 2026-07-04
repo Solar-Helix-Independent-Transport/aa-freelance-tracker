@@ -191,6 +191,43 @@ class TestUpdateCorpFreelanceJobs(TestCase):
         self.assertIsNotNone(self.owner.last_update)
 
     @patch("freelance_tracker.tasks.esi")
+    def test_saves_cursor_from_a_single_page_listing(self, mock_esi):
+        """A single-page listing whose page carries a cursor must persist it"""
+
+        listing_page = SimpleNamespace(
+            freelance_jobs=[], cursor=SimpleNamespace(after="cursor-123"),
+        )
+        mock_esi.client.Freelance_Jobs.GetCorporationsFreelanceJobsListing.return_value.results.return_value = [
+            listing_page
+        ]
+
+        update_corp_freelance_jobs(self.owner.pk)
+
+        self.owner.refresh_from_db()
+        self.assertEqual(self.owner.jobs_cursor, "cursor-123")
+
+    @patch("freelance_tracker.tasks.esi")
+    def test_saves_cursor_from_an_earlier_page_when_the_last_page_has_none(self, mock_esi):
+        """Regression test: django-esi's cursor-pagination loop always includes
+        the page that terminated it, and only stops once a page's cursor
+        comes back empty - so blindly trusting the *last* returned page's
+        cursor (the old behavior) misses whatever an earlier page carried.
+        """
+
+        first_page = SimpleNamespace(
+            freelance_jobs=[], cursor=SimpleNamespace(after="cursor-first"),
+        )
+        terminating_page = SimpleNamespace(freelance_jobs=[], cursor=None)
+        mock_esi.client.Freelance_Jobs.GetCorporationsFreelanceJobsListing.return_value.results.return_value = [
+            first_page, terminating_page,
+        ]
+
+        update_corp_freelance_jobs(self.owner.pk)
+
+        self.owner.refresh_from_db()
+        self.assertEqual(self.owner.jobs_cursor, "cursor-first")
+
+    @patch("freelance_tracker.tasks.esi")
     def test_skips_sync_without_a_valid_token(self, mock_esi):
         Token.objects.all().delete()
 

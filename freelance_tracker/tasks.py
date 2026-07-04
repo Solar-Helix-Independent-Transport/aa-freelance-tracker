@@ -114,8 +114,11 @@ def _fetch_freelance_job_listing(owner_pk: int, force: bool = False) -> dict:
 
     try:
         pages = esi.client.Freelance_Jobs.GetCorporationsFreelanceJobsListing(
-            corporation_id=corporation_id, token=token,
-        ).results(after=after, force_refresh=force)
+            corporation_id=corporation_id,
+            limit=100,
+            after=after,
+            token=token,
+        ).results(force_refresh=force)
     except HTTPNotModified:
         logger.debug("Freelance job listing unchanged for %s", owner.corporation)
         pages = []
@@ -135,11 +138,21 @@ def _fetch_freelance_job_listing(owner_pk: int, force: bool = False) -> dict:
 
     job_ids = listed_job_ids | known_job_ids
 
-    if pages:
-        new_cursor = getattr(getattr(pages[-1], "cursor", None), "after", None)
-        if new_cursor:
-            owner.jobs_cursor = new_cursor
-            owner.save(update_fields=["jobs_cursor"])
+    # django-esi's cursor-pagination loop always includes the *terminating*
+    # page in what it returns, and it only stops once a page's cursor comes
+    # back empty - so pages[-1] is virtually guaranteed to have no cursor,
+    # even when an earlier page carried a perfectly good one (e.g. any
+    # listing that fits in a single page). Scan every page and keep the most
+    # recent non-empty cursor seen, rather than trusting the last page.
+    new_cursor = None
+    for page in pages:
+        cursor_after = getattr(getattr(page, "cursor", None), "after", None)
+        if cursor_after:
+            new_cursor = cursor_after
+
+    if new_cursor:
+        owner.jobs_cursor = new_cursor
+        owner.save(update_fields=["jobs_cursor"])
 
     return {
         "owner_pk": owner_pk,
