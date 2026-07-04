@@ -17,6 +17,10 @@
     {% url "freelance_tracker:my_jobs" as nav_item_link %}
     {% include "framework/header/nav-collapse-button.html" with btn_modifier="outline-light" url=nav_item_link title=nav_item_title fa_icon="fa-solid fa-user" icon_on_mobile=True %}
 
+    {% translate "Leaderboard" as nav_item_title %}
+    {% url "freelance_tracker:leaderboard" as nav_item_link %}
+    {% include "framework/header/nav-collapse-button.html" with btn_modifier="outline-light" url=nav_item_link title=nav_item_title fa_icon="fa-solid fa-ranking-star" icon_on_mobile=True %}
+
     {% if perms.freelance_tracker.add_corp_owner %}
         {% translate "Add / Refresh Corp Token" as nav_item_title %}
         {% url "freelance_tracker:add_corp" as nav_item_link %}

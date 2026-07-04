@@ -1,0 +1,18 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+        <a href="{% url 'admin:index' %}">{% translate "Home" %}</a>
+        &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+        &rsaquo; <a href="{{ change_url }}">{{ object_label }}</a>
+        &rsaquo; {% translate "Raw ESI data" %}
+    </div>
+{% endblock %}
+
+{% block content %}
+    <p>
+        {% blocktranslate %}Fetched live from ESI just now, bypassing the ETag cache - this is not what's stored locally.{% endblocktranslate %}
+    </p>
+    <pre style="white-space: pre-wrap; word-break: break-word; max-height: 75vh; overflow: auto; padding: 1em; border: 1px solid var(--hairline-color, #ccc); background: var(--darkened-bg, #f8f8f8);">{{ raw_json }}</pre>
+{% endblock %}

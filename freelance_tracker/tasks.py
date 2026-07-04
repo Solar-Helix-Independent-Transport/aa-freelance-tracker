@@ -2,6 +2,7 @@
 
 # Standard Library
 import logging
+from datetime import timedelta
 from itertools import chain as chain_iterables
 
 # Third Party
@@ -9,6 +10,7 @@ from celery import chain as celery_chain
 from celery import shared_task
 
 # Django
+from django.core.cache import cache
 from django.utils import timezone
 
 # Alliance Auth
@@ -22,6 +24,19 @@ from freelance_tracker.models import FreelanceJob, FreelanceJobParticipant, Owne
 from freelance_tracker.providers import esi
 
 logger = logging.getLogger(__name__)
+
+# Safety-net TTL for the per-owner sync lock: long enough to cover a slow
+# sync, but short enough to self-clear before the next hourly periodic run
+# if a chain dies without reaching _finalize_corp_sync (e.g. worker crash).
+_SYNC_LOCK_TIMEOUT = 60 * 60
+
+# How long past a job's expiry to keep rechecking its participants for
+# late-arriving contribution changes, before giving up on it entirely.
+_PARTICIPANT_SYNC_GRACE_PERIOD = timedelta(hours=48)
+
+
+def _sync_lock_key(owner_pk: int) -> str:
+    return f"freelance_tracker:sync-lock:{owner_pk}"
 
 
 def _get_owner_token(owner: Owner) -> Token | None:
@@ -66,7 +81,16 @@ def update_corp_freelance_jobs(owner_pk: int, force: bool = False):
 
     If `force` is True, ESI's ETag cache is bypassed and every job the owner
     has ever had tracked (not just currently-active ones) is re-fetched.
+
+    A sync already in progress for this owner (periodic, manual add/refresh,
+    or admin force-resync) holds a lock for the duration of its chain, so a
+    second trigger for the same owner is a no-op rather than racing the first
+    on `jobs_cursor`/`last_update` writes.
     """
+
+    if not cache.add(_sync_lock_key(owner_pk), True, timeout=_SYNC_LOCK_TIMEOUT):
+        logger.info("Sync already in progress for owner pk=%s, skipping", owner_pk)
+        return None
 
     return celery_chain(
         _fetch_freelance_job_listing.s(owner_pk, force),
@@ -142,10 +166,10 @@ def _dispatch_freelance_job_syncs(self, listing_result: dict) -> None:
 
 
 @shared_task(bind=True)
-@rate_limited_task(rate="300/15m", keys=["owner_pk"]) # total is 900/15m, lets go slow.
+@rate_limited_task(rate="150/15m", keys=["owner_pk"]) # total is 900/15m, lets go slow.
 @rate_limit_retry_task # if we go over then just retry later anyway.
 def _sync_freelance_job(self, owner_pk: int, job_id: str, force: bool = False) -> None:
-    """Fetch/update a single job's detail, and sync its participants if it's active.
+    """Fetch/update a single job's detail, and recheck its participants.
 
     Its own task (rather than folded into a loop) so a per-job ESI rate limit
     can be applied.
@@ -163,11 +187,17 @@ def _sync_freelance_job(self, owner_pk: int, job_id: str, force: bool = False) -
             job_id=job_id, token=token,
         ).result(force_refresh=force)
     except HTTPNotModified:
-        # This job hasn't changed since our last poll, even though the
-        # listing as a whole has (e.g. another job changed).
+        # This job's own detail hasn't changed since our last poll, but
+        # contributions can still change independently of job detail/state
+        # (and vice versa) - recheck participants below regardless of what
+        # state the job is/was in.
         logger.debug("Job %s unchanged", job_id)
         existing = FreelanceJob.objects.filter(pk=job_id).first()
-        state = existing.state if existing else None
+        if existing is None:
+            # Nothing local to attach participants to yet (and ESI can't
+            # meaningfully 304 a job we've never fetched before) - bail.
+            return
+        expires = existing.expires
     else:
         dumped = detail.model_dump(mode="json")
 
@@ -191,19 +221,27 @@ def _sync_freelance_job(self, owner_pk: int, job_id: str, force: bool = False) -
                 "configuration_version": detail.configuration.version,
                 "configuration_parameters": dumped["configuration"]["parameters"],
                 "contribution": dumped["contribution"] or {},
-                "access_and_visibility": dumped["access_and_visibility"],
+                "access_and_visibility": dumped["access_and_visibility"] or {},
                 "last_modified": detail.last_modified,
             },
         )
-        state = detail.state
+        expires = detail.details.expires
 
-    if state == FreelanceJob.State.ACTIVE:
-        _sync_job_participants(owner, job_id, token, force=force)
+    if not force and expires is not None and timezone.now() > expires + _PARTICIPANT_SYNC_GRACE_PERIOD:
+        logger.debug(
+            "Job %s expired more than %s ago, skipping participant recheck",
+            job_id, _PARTICIPANT_SYNC_GRACE_PERIOD,
+        )
+        return
+
+    _sync_job_participants(owner, job_id, token, force=force)
 
 
 @shared_task
 def _finalize_corp_sync(owner_pk: int, skip: bool = False) -> None:
-    """Stage 3: stamp the owner as synced once every per-job task has finished"""
+    """Stage 3: stamp the owner as synced and release its sync lock"""
+
+    cache.delete(_sync_lock_key(owner_pk))
 
     if skip:
         return

@@ -1,0 +1,75 @@
+{% extends 'freelance_tracker/base.html' %}
+
+{% load i18n %}
+{% load humanize %}
+
+{% block page_title %}
+    {% translate "Leaderboard" %}
+{% endblock page_title %}
+
+{% block header_nav_brand %}
+    {% translate "Leaderboard" %}
+{% endblock header_nav_brand %}
+
+{% block header_nav_collapse_right %}
+    {% translate "All Freelance Jobs" as nav_item_title %}
+    {% url "freelance_tracker:index" as nav_item_link %}
+    {% include "framework/header/nav-collapse-button.html" with btn_modifier="outline-light" url=nav_item_link title=nav_item_title fa_icon="fa-solid fa-list" icon_on_mobile=True %}
+
+    {% translate "My Jobs" as nav_item_title %}
+    {% url "freelance_tracker:my_jobs" as nav_item_link %}
+    {% include "framework/header/nav-collapse-button.html" with btn_modifier="outline-light" url=nav_item_link title=nav_item_title fa_icon="fa-solid fa-user" icon_on_mobile=True %}
+{% endblock header_nav_collapse_right %}
+
+{% block details %}
+    <form method="get" class="d-flex align-items-center gap-2 mb-3">
+        <label for="fjt-days" class="col-form-label">{% translate "Last" %}</label>
+        <input type="number" id="fjt-days" name="days" value="{{ days }}" min="1" class="form-control w-auto" style="max-width: 6rem;">
+        <label for="fjt-days" class="col-form-label">{% translate "days" %}</label>
+        <button type="submit" class="btn btn-outline-primary btn-sm">{% translate "Update" %}</button>
+    </form>
+
+    <div class="row row-cols-1 row-cols-lg-2 g-3">
+        {% for board in boards %}
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <div class="card-title mb-0">{{ board.label }}</div>
+                    </div>
+                    <div class="card-body">
+                        {% if not board.rows %}
+                            <p class="mb-0 text-body-secondary">{% translate "No contributions in this window." %}</p>
+                        {% else %}
+                            <table class="table table-hover table-sm mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>{% translate "Main Character" %}</th>
+                                        {% if can_view_contributions %}
+                                            <th>{% translate "Contributed" %}</th>
+                                        {% endif %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in board.rows %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>
+                                                {{ row.main_character }}
+                                                {% if row.corporation_ticker %}<span class="text-body-secondary">[{{ row.corporation_ticker }}]</span>{% endif %}
+                                                {% if row.alliance_ticker %}<span class="text-body-secondary">&lt;{{ row.alliance_ticker }}&gt;</span>{% endif %}
+                                            </td>
+                                            {% if can_view_contributions %}
+                                                <td>{{ row.total|intcomma }}</td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

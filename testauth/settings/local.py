@@ -60,8 +60,14 @@ NOTIFICATIONS_MAX_PER_USER = 50
 #         },
 #     }
 
+# modeltranslation needs to be first in the list (required by eve_sde).
+INSTALLED_APPS = [
+    "modeltranslation",
+] + INSTALLED_APPS
+
 # Add any additional apps to this list.
 INSTALLED_APPS += [
+    "eve_sde",
     PACKAGE,
 ]
 

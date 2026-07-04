@@ -56,7 +56,13 @@
                         <dl class="row mb-0">
                             {% for row in parameter_rows %}
                                 <dt class="col-sm-4">{{ row.title }}</dt>
-                                <dd class="col-sm-8"><code>{{ row.value }}</code></dd>
+                                <dd class="col-sm-8">
+                                    {% if row.resolved %}
+                                        {% for item in row.resolved %}{% if not forloop.first %}, {% endif %}{% if item.is_any %}{% translate "Any" %}{% else %}{{ item.name|default:item.id }}{% endif %}{% endfor %}
+                                    {% else %}
+                                        <code>{{ row.value }}</code>
+                                    {% endif %}
+                                </dd>
                             {% endfor %}
                         </dl>
                     </dd>
@@ -65,6 +71,7 @@
         </div>
     </div>
 
+    {% if can_view_participants %}
     <div class="card card-primary">
         <div class="card-header">
             <div class="card-title mb-0">{% translate "Participants" %}</div>
@@ -95,4 +102,5 @@
             {% endif %}
         </div>
     </div>
+    {% endif %}
 {% endblock %}

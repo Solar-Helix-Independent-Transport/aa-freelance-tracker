@@ -1,91 +1,109 @@
-"""Static SDE-derived reference data for Freelance Job contribution methods.
+"""SDE-derived reference data for Freelance Job contribution methods.
 
-Bundled from the EVE SDE's freelance job contribution method definitions
-(freelance_tracker/data/freelance_job_methods.json). Used to turn a job's raw
-`configuration_method` / `configuration_parameters` into human-readable labels.
+Backed by `eve_sde`'s `FreelanceJobSchema`/`FreelanceJobSchemaParameter`
+models (imported from the EVE SDE, kept up to date by that app's own sync
+task). Used to turn a job's raw `configuration_method` /
+`configuration_parameters` into human-readable labels.
 """
 
-# Standard Library
-import json
-from functools import lru_cache
-from pathlib import Path
+# Third Party
+# Django EVE SDE
+from eve_sde.models import FreelanceJobSchema, FreelanceJobSchemaParameter
 
-# Django
-from django.utils.translation import get_language
-
-_DATA_PATH = Path(__file__).resolve().parent / "data" / "freelance_job_methods.json"
+# AA Freelance Tracker
+from freelance_tracker.resolve import resolve_values
 
 
-@lru_cache(maxsize=1)
-def _methods() -> dict:
-    """Contribution method definitions, keyed by method name (e.g. 'BoostShield')"""
+def get_method(method: str) -> FreelanceJobSchema | None:
+    """SDE schema for a contribution method, or None if unknown"""
 
-    with _DATA_PATH.open(encoding="utf-8") as data_file:
-        raw = json.load(data_file)
-
-    return {method["_key"]: method for method in raw["_value"]}
+    return FreelanceJobSchema.objects.filter(pk=method).first()
 
 
-def _localized(text: dict | None, lang: str | None = None) -> str:
-    if not text:
-        return ""
-
-    lang = (lang or get_language() or "en").split("-")[0]
-
-    return text.get(lang) or text.get("en") or next(iter(text.values()), "")
-
-
-def get_method(method: str) -> dict | None:
-    """Raw SDE definition for a contribution method, or None if unknown"""
-
-    return _methods().get(method)
-
-
-def get_method_title(method: str, lang: str | None = None) -> str:
+def get_method_title(method: str) -> str:
     """Human-readable title for a contribution method, falling back to the raw key"""
 
-    data = get_method(method)
+    schema = get_method(method)
 
-    return _localized(data.get("title"), lang) if data else method
+    return schema.title if schema else method
 
 
-def get_method_description(method: str, lang: str | None = None) -> str:
+def get_method_description(method: str) -> str:
     """Human-readable description for a contribution method"""
 
-    data = get_method(method)
+    schema = get_method(method)
 
-    return _localized(data.get("description"), lang) if data else ""
+    return schema.description or "" if schema else ""
 
 
-def describe_parameters(method: str, parameters: dict, lang: str | None = None) -> list[dict]:
+def _iter_value_groups(value):
+    """Yield (value_type, ids) for every matcher-shaped value group found in
+    `value`, at any nesting depth.
+
+    Matcher-kind parameters have one such group directly; the
+    corporation_item_delivery kind nests two of them (one per sub-field) a
+    level deeper - this walks either shape without special-casing either.
+
+    A group with an empty `values` list means "unrestricted" (any value of
+    that type is accepted) rather than "nothing set" - yielded as
+    `(None, [])` so callers can render that distinctly from an id list.
+    """
+
+    if not isinstance(value, dict):
+        return
+
+    entries = value.get("values")
+    if isinstance(entries, list):
+        if entries and isinstance(entries[0], dict) and "value_type" in entries[0]:
+            for entry in entries:
+                yield entry.get("value_type"), entry.get("values") or []
+        else:
+            yield None, []
+        return
+
+    for nested in value.values():
+        yield from _iter_value_groups(nested)
+
+
+def describe_parameters(method: str, parameters: dict) -> list[dict]:
     """Label a job's raw configuration_parameters using the SDE parameter definitions.
 
     Each parameter value is one of 4 ESI-defined shapes (matcher/options/boolean/
-    corporation_item_delivery), keyed by which "kind" it is. We label the parameter
-    itself from the SDE; the underlying value (location IDs, ship type IDs, etc.)
-    is passed through raw, since resolving those to names needs a separate
-    ESI/SDE type lookup.
+    corporation_item_delivery), keyed by which "kind" it is. We label the
+    parameter itself from the SDE, and resolve any location/ship/character/etc.
+    ids inside it to display names via `resolve.resolve_values` - values whose
+    `value_type` isn't recognized (or that aren't id references at all, e.g.
+    booleans/options) are left for the raw `value` to cover.
     """
 
-    data = get_method(method)
-    param_defs = {p["_key"]: p for p in data.get("parameters", [])} if data else {}
-
-    # ESI's runtime `oneOf` kind name doesn't always match the SDE's field name
-    # for the same variant (matcher/boolean do; corporation_item_delivery is
-    # named "itemDelivery" in the SDE).
-    sde_kind_names = {"corporation_item_delivery": "itemDelivery"}
+    param_defs = {
+        p.key: p for p in FreelanceJobSchemaParameter.objects.filter(schema_id=method)
+    }
 
     rows = []
     for key, value in (parameters or {}).items():
-        param_def = param_defs.get(key, {})
+        param_def = param_defs.get(key)
         kind = next(iter(value), None) if isinstance(value, dict) else None
-        kind_def = param_def.get(sde_kind_names.get(kind, kind), {}) if kind else {}
+        row_value = value.get(kind) if kind and isinstance(value, dict) else value
+
+        resolved = []
+        for value_type, ids in _iter_value_groups(row_value):
+            if value_type is None and not ids:
+                resolved.append({"value_type": None, "id": None, "name": None, "is_any": True})
+                continue
+
+            names = resolve_values(value_type, ids)
+            for raw_id in ids:
+                resolved.append(
+                    {"value_type": value_type, "id": raw_id, "name": names.get(str(raw_id))}
+                )
 
         rows.append(
             {
                 "key": key,
-                "title": _localized(kind_def.get("title") or param_def.get("title"), lang) or key,
-                "value": value.get(kind) if kind and isinstance(value, dict) else value,
+                "title": (param_def.title if param_def else None) or key,
+                "value": row_value,
+                "resolved": resolved,
             }
         )
 

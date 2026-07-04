@@ -41,6 +41,8 @@ dynamic = [
 dependencies = [
     "allianceauth>=5",
     "django-esi>=9.6",
+    # Needs the release that adds FreelanceJobSchema/FreelanceJobSchemaParameter/Archetype - bump once published.
+    "django-eveonline-sde>=0.0.1b11",
 ]
 urls.Changelog = "https://github.com/Solar-Helix-Independent-Transport/aa-freelance-tracker/blob/master/CHANGELOG.md"
 urls.Tracker = "https://github.com/Solar-Helix-Independent-Transport/aa-freelance-tracker/issues"

@@ -29,8 +29,23 @@ corporation "Freelance Jobs" from the EVE Online ESI.
    pip install aa-freelance-tracker
    ```
 
-1. Add `"freelance_tracker"` to `INSTALLED_APPS` in your Auth project's
-   `settings/local.py`.
+1. This app depends on [`django-eveonline-sde`](https://pypi.org/project/django-eveonline-sde/)
+   for Freelance Job schema/label data, which requires `modeltranslation` to be
+   first in `INSTALLED_APPS`:
+
+   ```python
+   INSTALLED_APPS = [
+       "modeltranslation",
+   ] + INSTALLED_APPS
+
+   INSTALLED_APPS += [
+       "eve_sde",
+       "freelance_tracker",
+   ]
+   ```
+
+   If you already have `eve_sde` installed for another plugin, just add
+   `"freelance_tracker"`.
 
 1. Run migrations and collect static files:
 
@@ -38,6 +53,11 @@ corporation "Freelance Jobs" from the EVE Online ESI.
    python manage.py migrate
    python manage.py collectstatic
    ```
+
+1. Make sure `eve_sde`'s SDE data is loaded (`python manage.py esde_load_sde`) and
+   kept up to date - see [django-eveonline-sde's README](https://github.com/Solar-Helix-Independent-Transport/django-eveonline-sde#setup)
+   for the periodic update task. Job type titles/descriptions fall back to the
+   raw ESI key if this data isn't loaded yet.
 
 1. Restart your Auth (gunicorn, Celery worker, and Celery beat).
 
@@ -55,19 +75,24 @@ corporation "Freelance Jobs" from the EVE Online ESI.
 
 ## Permissions
 
-| Permission       | Description                                                                                                |
-| ---------------- | ---------------------------------------------------------------------------------------------------------- |
-| `basic_access`   | Can access the app at all.                                                                                 |
-| `add_corp_owner` | Can link (or refresh the ESI token for) a corporation.                                                     |
-| `view_corp`      | Can see Freelance Jobs for their own corporation.                                                          |
-| `view_alliance`  | Can see Freelance Jobs for every corporation in their alliance (their own corp is included automatically). |
-| `view_faction`   | Can see Freelance Jobs for every corporation in their faction.                                             |
+| Permission          | Description                                                                                                |
+| ------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `basic_access`      | Can access the app at all.                                                                                 |
+| `add_corp_owner`    | Can link (or refresh the ESI token for) a corporation.                                                     |
+| `view_corp`         | Can see Freelance Jobs for their own corporation.                                                          |
+| `view_alliance`     | Can see Freelance Jobs for every corporation in their alliance (their own corp is included automatically). |
+| `view_faction`      | Can see Freelance Jobs for every corporation in their faction.                                             |
+| `view_participants` | Can see a job's participants list on its detail page, and contribution totals on the leaderboard.          |
 
 A user can hold any combination of `view_corp`/`view_alliance`/`view_faction` and
 sees the union of what they grant. `basic_access` is required in addition to at
 least one of the `view_*` permissions to see anything on the job board; without
 it, `my_jobs` (which only shows the user's own participation) still requires
-`basic_access` too.
+`basic_access` too. `view_participants` is independent of those three - it only
+gates whether the participants table is shown on a job a user can already see,
+and whether the "Contributed" column is shown on the leaderboard; without it,
+the rest of the job detail page and the leaderboard's rankings still render
+normally.
 
 ## Usage
 

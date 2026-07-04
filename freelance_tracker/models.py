@@ -153,4 +153,5 @@ class General(models.Model):
             ("view_corp", "Can view freelance jobs for their own corporation"),
             ("view_alliance", "Can view freelance jobs for their own alliance"),
             ("view_faction", "Can view freelance jobs for their own faction"),
+            ("view_participants", "Can view a job's participants in the detail view"),
         )
