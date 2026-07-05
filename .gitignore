@@ -2,6 +2,7 @@
 /dist/
 /*.egg-info/
 .idea/
+.claude/
 .tox/
 htmlcov/
 node_modules/
