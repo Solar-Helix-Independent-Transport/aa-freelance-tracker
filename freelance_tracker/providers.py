@@ -14,3 +14,18 @@ esi = ESIClientProvider(
     ua_url=__url__,
     tags=["Freelance Jobs"],
 )
+
+
+def with_optional_token(operation, token):
+    """Attach a token to an optionally-authenticated ESI operation.
+
+    GetFreelanceJobsDetail has no `security` requirement in the ESI spec -
+    public jobs need no auth - but ACL-protected jobs require a token from
+    a participant or the corp's freelance job manager to view at all.
+    django-esi's client rejects a token passed via the `token=` kwarg on any
+    operation without a declared security requirement, so it's attached
+    directly to the operation instead, which bypasses that guard while
+    still sending the Authorization header.
+    """
+    operation.token = token
+    return operation

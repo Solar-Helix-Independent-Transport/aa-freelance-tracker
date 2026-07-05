@@ -25,7 +25,7 @@ from esi.models import Token
 # AA Freelance Tracker
 from freelance_tracker import app_settings, sde
 from freelance_tracker.models import FreelanceJob, FreelanceJobParticipant, Owner
-from freelance_tracker.providers import esi
+from freelance_tracker.providers import esi, with_optional_token
 from freelance_tracker.tasks import update_corp_freelance_jobs
 
 logger = logging.getLogger(__name__)
@@ -319,8 +319,8 @@ def my_jobs(request: WSGIRequest) -> HttpResponse:
                 participation = esi.client.Freelance_Jobs.GetCharactersFreelanceJobsParticipation(
                     character_id=token.character_id, job_id=job.id, token=token,
                 ).result()
-                detail = esi.client.Freelance_Jobs.GetFreelanceJobsDetail(
-                    job_id=job.id,
+                detail = with_optional_token(
+                    esi.client.Freelance_Jobs.GetFreelanceJobsDetail(job_id=job.id), token,
                 ).result()
             except HTTPNotModified:
                 logger.debug("Job %s unchanged, skipping row for %s", job.id, token.character_name)

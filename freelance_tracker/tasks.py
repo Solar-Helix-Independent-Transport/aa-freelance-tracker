@@ -21,7 +21,7 @@ from esi.models import Token
 
 # AA Freelance Tracker
 from freelance_tracker.models import FreelanceJob, FreelanceJobParticipant, Owner
-from freelance_tracker.providers import esi
+from freelance_tracker.providers import esi, with_optional_token
 
 logger = logging.getLogger(__name__)
 
@@ -200,8 +200,8 @@ def _sync_freelance_job(self, owner_pk: int, job_id: str, force: bool = False) -
         return
 
     try:
-        detail = esi.client.Freelance_Jobs.GetFreelanceJobsDetail(
-            job_id=job_id,
+        detail = with_optional_token(
+            esi.client.Freelance_Jobs.GetFreelanceJobsDetail(job_id=job_id), token,
         ).result(force_refresh=force)
     except HTTPNotModified:
         # This job's own detail hasn't changed since our last poll, but

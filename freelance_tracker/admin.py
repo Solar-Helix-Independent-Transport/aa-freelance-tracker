@@ -12,7 +12,7 @@ from django.utils.html import format_html
 
 # AA Freelance Tracker
 from freelance_tracker.models import FreelanceJob, FreelanceJobParticipant, Owner
-from freelance_tracker.providers import esi
+from freelance_tracker.providers import esi, with_optional_token
 from freelance_tracker.tasks import _get_owner_token, update_corp_freelance_jobs
 
 
@@ -164,8 +164,8 @@ class FreelanceJobAdmin(admin.ModelAdmin):
             return HttpResponseRedirect(reverse("admin:freelance_tracker_freelancejob_changelist"))
 
         def fetch(token):
-            detail = esi.client.Freelance_Jobs.GetFreelanceJobsDetail(
-                job_id=job.pk,
+            detail = with_optional_token(
+                esi.client.Freelance_Jobs.GetFreelanceJobsDetail(job_id=job.pk), token,
             ).result(force_refresh=True)
             return detail.model_dump(mode="json")
 
