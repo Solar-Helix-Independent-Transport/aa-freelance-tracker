@@ -100,14 +100,18 @@ def update_corp_freelance_jobs(owner_pk: int, force: bool = False):
 
 @shared_task
 def _fetch_freelance_job_listing(owner_pk: int, force: bool = False) -> dict:
-    """Stage 1: page through the corp's freelance job listing and advance its cursor"""
+    """Stage 1: page through the corp's freelance job listing
+
+    Cursor advancement is deferred to stage 3, once every job sync it
+    depends on has actually succeeded - see `_finalize_corp_sync`.
+    """
 
     owner = Owner.objects.get(pk=owner_pk)
     token = _get_owner_token(owner)
 
     if token is None:
         logger.warning("No valid freelance-jobs token found for %s", owner.corporation)
-        return {"owner_pk": owner_pk, "force": force, "job_ids": [], "skip": True}
+        return {"owner_pk": owner_pk, "force": force, "job_ids": [], "skip": True, "new_cursor": None}
 
     corporation_id = owner.corporation.corporation_id
     after = "0" if force else (owner.jobs_cursor or "0")
@@ -150,15 +154,12 @@ def _fetch_freelance_job_listing(owner_pk: int, force: bool = False) -> dict:
         if cursor_after:
             new_cursor = cursor_after
 
-    if new_cursor:
-        owner.jobs_cursor = new_cursor
-        owner.save(update_fields=["jobs_cursor"])
-
     return {
         "owner_pk": owner_pk,
         "force": force,
         "job_ids": [str(job_id) for job_id in job_ids],
         "skip": False,
+        "new_cursor": new_cursor,
     }
 
 
@@ -168,14 +169,17 @@ def _dispatch_freelance_job_syncs(self, listing_result: dict) -> None:
 
     owner_pk = listing_result["owner_pk"]
     job_ids = listing_result["job_ids"]
+    new_cursor = listing_result["new_cursor"]
 
     if listing_result["skip"] or not job_ids:
-        _finalize_corp_sync.delay(owner_pk, listing_result["skip"])
+        _finalize_corp_sync.delay(owner_pk, listing_result["skip"], new_cursor)
         return
 
     force = listing_result["force"]
     job_syncs = [_sync_freelance_job.si(owner_pk, job_id, force) for job_id in job_ids]
-    return self.replace(celery_chain(*job_syncs, _finalize_corp_sync.si(owner_pk, False)))
+    return self.replace(
+        celery_chain(*job_syncs, _finalize_corp_sync.si(owner_pk, False, new_cursor))
+    )
 
 
 @shared_task(bind=True)
@@ -251,8 +255,13 @@ def _sync_freelance_job(self, owner_pk: int, job_id: str, force: bool = False) -
 
 
 @shared_task
-def _finalize_corp_sync(owner_pk: int, skip: bool = False) -> None:
-    """Stage 3: stamp the owner as synced and release its sync lock"""
+def _finalize_corp_sync(owner_pk: int, skip: bool = False, new_cursor: str | None = None) -> None:
+    """Stage 3: advance the cursor, stamp the owner as synced, and release its sync lock
+
+    Only reached once every job sync in the chain has succeeded, so the
+    cursor is not persisted - and jobs are not silently skipped on future
+    syncs - unless everything the listing surfaced was actually saved.
+    """
 
     cache.delete(_sync_lock_key(owner_pk))
 
@@ -261,7 +270,11 @@ def _finalize_corp_sync(owner_pk: int, skip: bool = False) -> None:
 
     owner = Owner.objects.get(pk=owner_pk)
     owner.last_update = timezone.now()
-    owner.save(update_fields=["last_update"])
+    update_fields = ["last_update"]
+    if new_cursor:
+        owner.jobs_cursor = new_cursor
+        update_fields.append("jobs_cursor")
+    owner.save(update_fields=update_fields)
 
 
 def _sync_job_participants(owner: Owner, job_id, token: Token, force: bool = False):

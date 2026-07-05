@@ -228,6 +228,33 @@ class TestUpdateCorpFreelanceJobs(TestCase):
         self.assertEqual(self.owner.jobs_cursor, "cursor-first")
 
     @patch("freelance_tracker.tasks.esi")
+    def test_cursor_is_not_advanced_when_a_job_sync_fails(self, mock_esi):
+        """Regression test: a job task failing after the listing page has
+        already been consumed must not advance the cursor - otherwise that
+        job's page is never listed again and it's silently lost forever.
+        """
+
+        job_id = uuid.uuid4()
+        listing_page = SimpleNamespace(
+            freelance_jobs=[SimpleNamespace(id=job_id)],
+            cursor=SimpleNamespace(after="cursor-123"),
+        )
+        mock_esi.client.Freelance_Jobs.GetCorporationsFreelanceJobsListing.return_value.results.return_value = [
+            listing_page
+        ]
+        mock_esi.client.Freelance_Jobs.GetFreelanceJobsDetail.return_value.result.side_effect = (
+            ValueError("boom")
+        )
+
+        with self.assertRaises(ValueError):
+            update_corp_freelance_jobs(self.owner.pk)
+
+        self.assertFalse(FreelanceJob.objects.exists())
+        self.owner.refresh_from_db()
+        self.assertFalse(self.owner.jobs_cursor)
+        self.assertIsNone(self.owner.last_update)
+
+    @patch("freelance_tracker.tasks.esi")
     def test_skips_sync_without_a_valid_token(self, mock_esi):
         Token.objects.all().delete()
 
