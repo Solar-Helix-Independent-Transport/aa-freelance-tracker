@@ -17,9 +17,9 @@ corporation "Freelance Jobs" from the EVE Online ESI.
   [How syncing works](#how-syncing-works) below), so a slow or failing job
   doesn't block the rest of that corp's sync.
 
-![Job board with status filter, sorting, and search](imgs/list.png)
+![Job board with status filter, sorting, and search](https://raw.githubusercontent.com/Solar-Helix-Independent-Transport/aa-freelance-tracker/refs/heads/main/imgs/list.png "Job board with status filter, sorting, and search")
 
-![Job detail page with progress, reward, configuration, and participants](imgs/details.png)
+![Job detail page with progress, reward, configuration, and participants](https://raw.githubusercontent.com/Solar-Helix-Independent-Transport/aa-freelance-tracker/refs/heads/main/imgs/details.png "Job detail page with progress, reward, configuration, and participants")
 
 ## Installation
 
