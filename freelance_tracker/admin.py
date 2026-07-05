@@ -165,7 +165,7 @@ class FreelanceJobAdmin(admin.ModelAdmin):
 
         def fetch(token):
             detail = esi.client.Freelance_Jobs.GetFreelanceJobsDetail(
-                job_id=job.pk, token=token,
+                job_id=job.pk,
             ).result(force_refresh=True)
             return detail.model_dump(mode="json")
 

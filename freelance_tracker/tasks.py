@@ -197,7 +197,7 @@ def _sync_freelance_job(self, owner_pk: int, job_id: str, force: bool = False) -
 
     try:
         detail = esi.client.Freelance_Jobs.GetFreelanceJobsDetail(
-            job_id=job_id, token=token,
+            job_id=job_id,
         ).result(force_refresh=force)
     except HTTPNotModified:
         # This job's own detail hasn't changed since our last poll, but

@@ -320,7 +320,7 @@ def my_jobs(request: WSGIRequest) -> HttpResponse:
                     character_id=token.character_id, job_id=job.id, token=token,
                 ).result()
                 detail = esi.client.Freelance_Jobs.GetFreelanceJobsDetail(
-                    job_id=job.id, token=token,
+                    job_id=job.id,
                 ).result()
             except HTTPNotModified:
                 logger.debug("Job %s unchanged, skipping row for %s", job.id, token.character_name)
